@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knots and Crosses</title>
+    <link rel="stylesheet" href="KnCwPC.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Knots and Crosses</h1>
+
+      <div class="game-mode">
+        <button id="mode-pvp" class="mode-btn active">Player vs Player</button>
+        <button id="mode-pvc" class="mode-btn">Player vs Computer</button>
+      </div>
+
+      <div class="player-names">
+        <div class="name-input">
+          <label for="player-x-name">Player X Name:</label>
+          <input
+            type="text"
+            id="player-x-name"
+            placeholder="Enter name for X"
+          />
+        </div>
+        <div class="name-input">
+          <label for="player-o-name">Player O Name:</label>
+          <input
+            type="text"
+            id="player-o-name"
+            placeholder="Enter name for O"
+          />
+        </div>
+        <button id="save-names">Save Names</button>
+      </div>
+
+      <div class="game-info">
+        <div class="player player-x active">Player X</div>
+        <div class="player player-o">Player O</div>
+      </div>
+
+      <div class="game-board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+
+      <div class="message"></div>
+
+      <div class="controls">
+        <button id="reset">Reset Game</button>
+        <button id="new-game">New Game</button>
+      </div>
+
+      <div class="score-board">
+        <div class="score score-x">X Wins: <span id="score-x">0</span></div>
+        <div class="score score-o">O Wins: <span id="score-o">0</span></div>
+        <div class="score">Draws: <span id="score-draw">0</span></div>
+      </div>
+    </div>
+
+    <script src="KnCwPC.js"></script>
+  </body>
+</html>

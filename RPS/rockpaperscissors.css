@@ -1,0 +1,62 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
+  background-color: #f0f0f0;
+}
+
+.game {
+  margin: 30px auto;
+  max-width: 500px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.move-button {
+  padding: 0px 0px;
+  border-radius: 500px;
+  margin: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  /* border-radius: 5px; */
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.move-button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.move-image {
+  height: 90px;
+  width: auto;
+  border-radius: 500px;
+}
+
+.result-display {
+  margin-top: 30px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.win {
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.lose {
+  color: #f44336;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.tie {
+  color: #FF9800;
+  font-weight: bold;
+  font-size: 24px;
+}

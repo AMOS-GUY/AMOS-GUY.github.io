@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive 3D Rubik's Cube Solver</title>
+    <link rel="stylesheet" href="rubiks3d.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-cube"></i> Interactive 3D Rubik's Cube Solver</h1>
+        <p class="subtitle">
+          Drag to rotate, click faces to turn, follow real-time instructions!
+        </p>
+      </header>
+
+      <div class="main-content">
+        <!-- Left Panel: 3D Cube and Controls -->
+        <div class="cube-section">
+          <div class="cube-container">
+            <div id="cube-3d-container" class="cube-3d-container">
+              <!-- Three.js 3D Cube will be rendered here -->
+            </div>
+            <div class="cube-controls">
+              <div class="view-controls">
+                <h3><i class="fas fa-eye"></i> View Controls</h3>
+                <div class="control-group">
+                  <button id="reset-view" class="control-btn">
+                    <i class="fas fa-sync-alt"></i> Reset View
+                  </button>
+                  <button id="auto-rotate" class="control-btn">
+                    <i class="fas fa-redo"></i> Auto Rotate
+                  </button>
+                </div>
+                <div class="touch-hint">
+                  <i class="fas fa-hand-pointer"></i>
+                  <span>Drag to rotate cube • Click faces to turn</span>
+                </div>
+              </div>
+
+              <div class="face-controls">
+                <h3><i class="fas fa-hand-point-up"></i> Quick Face Turns</h3>
+                <div class="face-buttons">
+                  <div class="face-row">
+                    <button class="face-btn" data-face="U" data-direction="1">
+                      <i class="fas fa-arrow-up"></i> U
+                    </button>
+                  </div>
+                  <div class="face-row">
+                    <button class="face-btn" data-face="L" data-direction="1">
+                      <i class="fas fa-arrow-left"></i> L
+                    </button>
+                    <button class="face-btn" data-face="F" data-direction="1">
+                      <i class="fas fa-forward"></i> F
+                    </button>
+                    <button class="face-btn" data-face="R" data-direction="1">
+                      <i class="fas fa-arrow-right"></i> R
+                    </button>
+                  </div>
+                  <div class="face-row">
+                    <button class="face-btn" data-face="D" data-direction="1">
+                      <i class="fas fa-arrow-down"></i> D
+                    </button>
+                  </div>
+                  <div class="face-row">
+                    <button class="face-btn" data-face="B" data-direction="1">
+                      <i class="fas fa-backward"></i> B
+                    </button>
+                  </div>
+                </div>
+                <div class="direction-controls">
+                  <button class="dir-btn" data-direction="-1">
+                    <i class="fas fa-undo"></i> Counter-clockwise
+                  </button>
+                  <button class="dir-btn" data-direction="2">
+                    <i class="fas fa-exchange-alt"></i> 180°
+                  </button>
+                  <button class="dir-btn" data-direction="1">
+                    <i class="fas fa-redo"></i> Clockwise
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-controls">
+            <button id="scramble-btn" class="game-btn scramble">
+              <i class="fas fa-random"></i> Scramble Cube
+            </button>
+            <button id="solve-btn" class="game-btn solve">
+              <i class="fas fa-magic"></i> Start Solving
+            </button>
+            <button id="reset-btn" class="game-btn reset">
+              <i class="fas fa-redo"></i> Reset Cube
+            </button>
+            <button id="hint-btn" class="game-btn hint">
+              <i class="fas fa-lightbulb"></i> Show Hint
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Panel: Instructions and Progress -->
+        <div class="instruction-section">
+          <div class="current-instruction">
+            <h3><i class="fas fa-bullhorn"></i> Current Instruction</h3>
+            <div id="instruction-box" class="instruction-box">
+              <div class="instruction-content">
+                <div class="instruction-icon">
+                  <i class="fas fa-cube"></i>
+                </div>
+                <div class="instruction-text">
+                  <h4>Welcome to 3D Rubik's Cube Solver!</h4>
+                  <p>
+                    Click "Scramble Cube" to start, then "Start Solving" to get
+                    step-by-step instructions.
+                  </p>
+                </div>
+              </div>
+              <div class="instruction-visual">
+                <div class="move-display">
+                  <span class="move-label">Next Move:</span>
+                  <span id="next-move" class="move">-</span>
+                </div>
+                <div class="animation-preview" id="animation-preview">
+                  <!-- Animation will be shown here -->
+                  <div class="cube-mini" id="cube-mini">
+                    <div class="mini-face front"></div>
+                    <div class="mini-face back"></div>
+                    <div class="mini-face top"></div>
+                    <div class="mini-face bottom"></div>
+                    <div class="mini-face left"></div>
+                    <div class="mini-face right"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-section">
+            <h3><i class="fas fa-chart-line"></i> Solving Progress</h3>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div
+                  id="progress-fill"
+                  class="progress-fill"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <div class="progress-stats">
+                <span
+                  >Step: <span id="current-step">0</span>/<span id="total-steps"
+                    >7</span
+                  ></span
+                >
+                <span>Moves: <span id="move-count">0</span></span>
+                <span>Time: <span id="timer">00:00</span></span>
+              </div>
+            </div>
+
+            <div class="step-indicators">
+              <div class="step-indicator active" data-step="1">
+                <span class="step-number">1</span>
+                <span class="step-name">White Cross</span>
+              </div>
+              <div class="step-indicator" data-step="2">
+                <span class="step-number">2</span>
+                <span class="step-name">White Corners</span>
+              </div>
+              <div class="step-indicator" data-step="3">
+                <span class="step-number">3</span>
+                <span class="step-name">Middle Layer</span>
+              </div>
+              <div class="step-indicator" data-step="4">
+                <span class="step-number">4</span>
+                <span class="step-name">Yellow Cross</span>
+              </div>
+              <div class="step-indicator" data-step="5">
+                <span class="step-number">5</span>
+                <span class="step-name">Orient Corners</span>
+              </div>
+              <div class="step-indicator" data-step="6">
+                <span class="step-number">6</span>
+                <span class="step-name">Position Corners</span>
+              </div>
+              <div class="step-indicator" data-step="7">
+                <span class="step-number">7</span>
+                <span class="step-name">Position Edges</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="steps-list">
+            <h3><i class="fas fa-list-ol"></i> Step-by-Step Guide</h3>
+            <div id="steps-container" class="steps-container">
+              <div class="step-item completed">
+                <div class="step-header">
+                  <span class="step-check"><i class="fas fa-check"></i></span>
+                  <span class="step-title">Cube Scrambled</span>
+                </div>
+              </div>
+              <!-- Steps will be dynamically added here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section: Cube State and Help -->
+      <div class="bottom-section">
+        <div class="cube-state">
+          <h3><i class="fas fa-info-circle"></i> Cube State</h3>
+          <div class="state-info">
+            <div class="state-item">
+              <span class="state-label">Status:</span>
+              <span id="cube-status" class="status scrambled">Scrambled</span>
+            </div>
+            <div class="state-item">
+              <span class="state-label">Solving Stage:</span>
+              <span id="solving-stage">Not Started</span>
+            </div>
+            <div class="state-item">
+              <span class="state-label">Current Face:</span>
+              <span id="current-face">None</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3><i class="fas fa-question-circle"></i> How to Play</h3>
+          <ul class="help-list">
+            <li>
+              <i class="fas fa-mouse-pointer"></i>
+              <strong>Click faces</strong> on the 3D cube to rotate them
+            </li>
+            <li>
+              <i class="fas fa-arrows-alt"></i> <strong>Drag</strong> to rotate
+              the entire cube view
+            </li>
+            <li>
+              <i class="fas fa-play-circle"></i> Click
+              <strong>Start Solving</strong> for real-time guidance
+            </li>
+            <li>
+              <i class="fas fa-lightbulb"></i> Use <strong>Show Hint</strong> if
+              you're stuck on a step
+            </li>
+            <li>
+              <i class="fas fa-forward"></i> Follow the highlighted animations
+              for each move
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Interactive 3D Rubik's Cube Solver &copy; 2024 | Drag, click, and
+          learn to solve!
+        </p>
+      </footer>
+    </div>
+
+    <!-- Animation Modal -->
+    <div id="animation-modal" class="animation-modal">
+      <div class="animation-content">
+        <div class="animation-header">
+          <h3><i class="fas fa-play-circle"></i> Watch This Move</h3>
+          <button class="close-animation">&times;</button>
+        </div>
+        <div class="animation-body">
+          <div id="animated-cube" class="animated-cube">
+            <!-- Animated cube will be shown here -->
+          </div>
+          <div class="animation-instruction">
+            <h4 id="animation-title">Rotate Front Face Clockwise</h4>
+            <p id="animation-description">
+              Watch the animation, then perform this move on your cube.
+            </p>
+            <div class="move-notation">
+              <span class="notation">F</span>
+              <span class="notation-desc">Clockwise rotation</span>
+            </div>
+          </div>
+        </div>
+        <div class="animation-footer">
+          <button id="repeat-animation" class="anim-btn">
+            <i class="fas fa-redo"></i> Repeat Animation
+          </button>
+          <button id="got-it-btn" class="anim-btn got-it">
+            <i class="fas fa-check"></i> Got It!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="rubiks3d.js"></script>
+  </body>
+</html>
